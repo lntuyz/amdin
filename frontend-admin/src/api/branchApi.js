@@ -8,7 +8,7 @@ const BASE_PATH = "http://localhost:5001/api/superadmin";
 export const branchApi = {
   getAllBranches: async () => {
     try {
-      const response = await api.get(`${BASE_PATH}/branches`);
+      const response = await api.get(`${BASE_PATH}/api/branches`);
 
       let branches = [];
 
