@@ -19,7 +19,7 @@ import bell from "../../assets/bell.svg";
 import cart from "../../assets/cart.svg";
 import { fetchWithAuth } from "../../utils/fetchWithAuth";
 import { useNotification } from "../../context/Notifications";
-
+import { tokenStorage } from "../../utils/token";
 function getRoutesByPosition(routesByPosition) {
   return routesByPosition
     .map((route) => {
@@ -81,6 +81,7 @@ function NavBar({ user, onLogout, productInCart }) {
     setNotifications,
     fetchAllNotifications,
   } = useNotification();
+  const token = tokenStorage.get();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
   const handleOpenFeedback = (notification) => {
@@ -131,14 +132,14 @@ function NavBar({ user, onLogout, productInCart }) {
             },
           ]
         : []),
-      ...(user?.role === "Quản lý"
+      ...(user?.role === "Quản lý" || user?.role === "Siêu quản lý"
         ? [
             {
               key: "account",
               label: "Tài khoản",
               icon: <UserOutlined />,
               onClick: () => {
-                window.location.href = `http://localhost:3001/`;
+                window.location.href = `http://localhost:3001?token=${token}`;
               },
             },
           ]

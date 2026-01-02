@@ -30,7 +30,7 @@ const RoleGuard = ({ roles, children }) => {
     if (currentRole === "customer") {
       return <Navigate to="/" replace />;
     }
-    if (currentRole === "Quản lý") {
+    if (currentRole === "Quản lý" || currentRole === "Siêu quản lý") {
       return (window.location.href = `http://localhost:3001?token=${token}`);
     }
   }
