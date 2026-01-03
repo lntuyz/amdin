@@ -7,7 +7,7 @@ const DefaultHeader = ({ children }) => {
   const { productInCart, refetchCart, setProductInCart } = useOrder();
   return (
     <div className="bg-color">
-      <div className="header-sticky">
+      <div>
         <HeaderComponent
           user={user}
           onLogout={logout}
