@@ -1,6 +1,5 @@
 // ===============================================
-// src/pages/Shipper/Shipper.jsx - FIXED
-// ✅ Logic render rating đã chuyển vào đây
+// src/pages/Shipper/Shipper.jsx - WITH DEBUG LOGS
 // ===============================================
 import React, { useState, useEffect } from "react";
 import { Tag, Space, Button, Tooltip, Modal, Alert } from "antd";
@@ -72,11 +71,11 @@ const Shipper = () => {
       }));
 
       setBranches(branchOptions);
-      console.log(" Đã load branches cho shipper:", branchOptions);
+      console.log("✅ Đã load branches cho shipper:", branchOptions);
     } else {
       const errorMsg = "Không thể tải danh sách chi nhánh. Vui lòng thử lại.";
       setBranchError(errorMsg);
-      console.error(" Lỗi load branches:", result.message);
+      console.error("❌ Lỗi load branches:", result.message);
       Modal.error({
         title: "Lỗi tải dữ liệu",
         content: errorMsg,
@@ -101,17 +100,21 @@ const Shipper = () => {
       return;
     }
 
+    console.log("➕ Mở modal ADD");
     setModalMode("add");
     setSelectedShipper(null);
     setIsModalOpen(true);
   };
 
   const handleEditClick = (shipper) => {
+    console.group("✏️ EDIT CLICK");
+    console.log("1. Shipper record từ table:", shipper);
+
     setModalMode("edit");
 
     const formData = {
       shipper_id: shipper.shipper_id,
-      shipper_name: shipper_name,
+      shipper_name: shipper.name,
       email: shipper.email,
       phone: shipper.phone,
       status: shipper.status,
@@ -119,34 +122,46 @@ const Shipper = () => {
       salary: shipper.salary || 8000000,
     };
 
+    console.log("2. Form data chuẩn bị:", formData);
+    console.groupEnd();
+
     setSelectedShipper(formData);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
+    console.log("❌ Đóng modal");
     setIsModalOpen(false);
     setSelectedShipper(null);
   };
 
   const handleSaveShipper = async (shipperData) => {
+    console.group("💾 SAVE SHIPPER");
+    console.log("1. Mode:", modalMode);
+    console.log("2. Data từ form:", shipperData);
+    console.log("3. Selected shipper:", selectedShipper);
+
     let result;
 
     if (modalMode === "add") {
       // THÊM MỚI
       if (!shipperData.branch_id && currentBranchId) {
         shipperData.branch_id = currentBranchId;
-        console.log(" Tự động điền branch_id từ context:", currentBranchId);
+        console.log("✅ Tự động điền branch_id từ context:", currentBranchId);
       }
 
       if (!shipperData.branch_id) {
+        console.error("❌ Thiếu branch_id");
         Modal.error({
           title: "Thiếu thông tin",
           content: "Không xác định được chi nhánh. Vui lòng chọn chi nhánh.",
           centered: true,
         });
+        console.groupEnd();
         return;
       }
 
+      console.log("4. Gọi addShipper với data:", shipperData);
       result = await addShipper(shipperData);
     } else {
       // EDIT
@@ -156,8 +171,14 @@ const Shipper = () => {
         branch_id: selectedShipper.branch_id,
       };
 
+      console.log("4. Update data gửi đi:", updateData);
+      console.log("5. Shipper ID:", shipperId);
+
       result = await updateShipper(shipperId, updateData);
     }
+
+    console.log("6. Result từ API:", result);
+    console.groupEnd();
 
     if (result?.success) {
       handleCloseModal();
@@ -198,6 +219,7 @@ const Shipper = () => {
       });
     }
 
+    console.log("📋 Form fields cho EDIT:", baseFields);
     return baseFields;
   };
 
@@ -266,7 +288,6 @@ const Shipper = () => {
         </span>
       ),
     },
-
     {
       title: "Email",
       dataIndex: "email",
@@ -303,7 +324,6 @@ const Shipper = () => {
       width: 150,
       align: "center",
       render: (rating) => {
-        // ✅ Logic render rating ở đây
         const stars = [];
         const fullStars = Math.floor(rating || 0);
 
@@ -362,7 +382,6 @@ const Shipper = () => {
       key: "action",
       width: 120,
       align: "center",
-      fixed: "right",
       render: (_, record) => (
         <Space size="small">
           <Tooltip title="Chỉnh sửa">

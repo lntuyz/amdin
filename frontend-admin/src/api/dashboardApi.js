@@ -10,6 +10,7 @@ export const dashboardApi = {
   // ========================================
 
   //  4 APIs  theo month/year
+
   getTotalOrders: async (month, year) => {
     try {
       const response = await api.get(
@@ -28,13 +29,13 @@ export const dashboardApi = {
     }
   },
 
-  getTotalAmount: async (month, year) => {
+  getTotalAmount: async (month, year, branch_id) => {
     try {
       const response = await api.post(
         "http://localhost:5001/api/admin/dashboard/total_amount_for_month",
         null,
         {
-          params: { month, year },
+          params: { month, year, branch_id },
         }
       );
       return {
@@ -88,11 +89,15 @@ export const dashboardApi = {
   },
 
   // trả tất cả data)
-  getOrderStatusDistribution: async () => {
+  getOrderStatusDistribution: async (month, year, branch_id) => {
     try {
       const response = await api.get(
-        "http://localhost:5001/api/admin/dashboard/order-status-distribution"
+        "http://localhost:5001/api/admin/dashboard/order-status-distribution",
+        {
+          params: { month, year, branch_id }, // gửi params
+        }
       );
+
       return {
         success: true,
         data: response.data?.data || { total_orders: 0, distribution: [] },
@@ -103,11 +108,18 @@ export const dashboardApi = {
     }
   },
 
-  getTopProducts: async () => {
+  // -------------------------------
+  // Top Selling Products
+  // -------------------------------
+  getTopProducts: async (month, year, branch_id) => {
     try {
       const response = await api.get(
-        "http://localhost:5001/api/admin/dashboard/top-products"
+        "http://localhost:5001/api/admin/dashboard/top-products",
+        {
+          params: { month, year, branch_id }, // gửi params
+        }
       );
+
       return {
         success: true,
         data: response.data?.data || [],

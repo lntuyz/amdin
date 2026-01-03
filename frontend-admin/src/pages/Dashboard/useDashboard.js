@@ -9,7 +9,8 @@ import { useAuth } from "../../context/AuthContext";
 export const useDashboard = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
-
+  const { getCurrentBranch } = useAuth();
+  const currentBranch = getCurrentBranch();
   const currentDate = new Date();
   const [selectedMonth, setSelectedMonth] = useState(
     currentDate.getMonth() + 1
@@ -71,9 +72,21 @@ export const useDashboard = () => {
       // ✅ CHỈ GỌI 4 APIs: 1 filtered (doanh thu) + 3 unfiltered (biểu đồ)
       const [amountRes, orderStatusRes, topProductsRes, customerGrowthRes] =
         await Promise.all([
-          dashboardApi.getTotalAmount(selectedMonth, selectedYear),
-          dashboardApi.getOrderStatusDistribution(),
-          dashboardApi.getTopProducts(),
+          dashboardApi.getTotalAmount(
+            selectedMonth,
+            selectedYear,
+            currentBranch.id
+          ),
+          dashboardApi.getOrderStatusDistribution(
+            selectedMonth,
+            selectedYear,
+            currentBranch.id
+          ),
+          dashboardApi.getTopProducts(
+            selectedMonth,
+            selectedYear,
+            currentBranch.id
+          ),
           dashboardApi.getCustomerGrowth(),
         ]);
 
