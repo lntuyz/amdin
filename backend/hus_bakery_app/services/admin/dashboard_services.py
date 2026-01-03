@@ -120,7 +120,7 @@ def get_order_status_distribution():
             stats["Pending"] += count
         elif status_name == "Đang giao":
             stats["Shipping"] += count
-        elif status_name == "Đã hủy":
+        elif status_name == "Không hoàn thành":
             stats["Cancelled"] += count
         total += count
 

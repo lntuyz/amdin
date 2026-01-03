@@ -37,7 +37,7 @@ def haversine(lat1, lon1, lat2, lon2):
     return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
 # --- SECTION B: CLIENT ORDER CREATION ---
-def create_order(customer_id, recipient_name, payment_method, total_amount, phone, branch_id, shipping_address, coupon_id=None):
+def create_order(customer_id, recipient_name, payment_method, total_amount, phone, branch_id, shipping_address, note=None, coupon_id=None ):
   
     selected_items = CartItem.query.filter_by(customer_id=customer_id, selected=True).all()
     if not selected_items:
@@ -72,6 +72,7 @@ def create_order(customer_id, recipient_name, payment_method, total_amount, phon
             recipient_name=recipient_name,
             total_amount=total_amount, # Lưu ý: check lại tên cột trong DB là total_money hay total_amount
             created_at=datetime.now(),
+            note = note,
         )
         db.session.add(new_order)
         db.session.flush() # Để lấy order_id ngay

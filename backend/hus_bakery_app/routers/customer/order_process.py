@@ -137,6 +137,7 @@ def api_create_order():
         phone=data.get("phone"),
         branch_id=data.get("branch_id"),
         shipping_address=data.get("shipping_address"),
+        note = data.get("note"),
         coupon_id=data.get("coupon_id"),
     )
 

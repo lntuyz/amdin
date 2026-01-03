@@ -40,7 +40,6 @@ def count_failed_orders(shipper_id):
 def calculate_avg_rating(shipper_id):
     avg = db.session.query(func.avg(ShipperReview.rating)) \
         .filter(ShipperReview.shipper_id == shipper_id).scalar()
-
     # Làm tròn 1 chữ số thập phân (VD: 4.8)
     return round(float(avg), 1) if avg else 0.0
 

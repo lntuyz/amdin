@@ -11,10 +11,16 @@ from hus_bakery_app.models.order import Order
 from hus_bakery_app.models.order_item import OrderItem
 from hus_bakery_app.models.order_status import OrderStatus
 from hus_bakery_app.models.products import Product
+from hus_bakery_app.models.feedback import Feedback
 from hus_bakery_app.models.shipper import Shipper
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, '..', 'static', 'avatars')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def get_rating_star_branch_service(branch_id):
+    average = db.session.query(func.avg(Feedback.rating))\
+        .filter(Feedback.branch_id == branch_id).scalar()
+    return round(float(average), 1) if average else 0
 
 
 def total_amount_of_customer(customer_id):
@@ -140,7 +146,7 @@ def get_order_history_service(customer_id):
             "prices": prices,  # Cột Giá
 
             "branch_id": order.branch_id if order.branch_id else "Kho tổng",  # Cột Cơ sở
-            "created_at": order.created_at.strftime("%d/%m/%Y"),  # Cột Ngày đặt hàng
+            "created_at": order.created_at,  # Cột Ngày đặt hàng
             "received_at": received_date,  # Cột Ngày nhận hàng
             "total_amount": float(order.total_amount) if order.total_amount else 0,  # Cột Tổng tiền
             "status": status_text  # Cột Trạng thái
@@ -229,6 +235,7 @@ def get_branch_detail():
             "mapSrc": branch.mapSrc,
             "lat": branch.lat,
             "lon": branch.lng,
+            "rating": get_rating_star_branch_service(branch.branch_id)
         }
         branches_list.append(details)
 

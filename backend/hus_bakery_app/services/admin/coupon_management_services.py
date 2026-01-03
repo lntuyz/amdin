@@ -34,8 +34,12 @@ def add_coupon_service(data):
 def edit_coupon_service(coupon_id, data):
     coupon = Coupon.query.get(coupon_id)
     if coupon:
-        # Cập nhật các trường dựa trên tên biến trong Model coupon.py
+        coupon.description = data.get("description",coupon.description)
+        
         coupon.discount_value = data.get('discount_value', coupon.discount_value)
+        coupon.discount_type = data.get('discount_value', coupon.discount_type)
+        coupon.min_purchase = data.get('discount_value', coupon.min_purchase)
+        coupon.max_discount = data.get('discount_value', coupon.max_discount)
         coupon.begin_date = data.get('begin_date', coupon.begin_date)
         coupon.end_date = data.get('end_date', coupon.end_date)
         coupon.status = data.get('status', coupon.status)

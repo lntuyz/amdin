@@ -30,14 +30,36 @@ def order_management():
 @order_admin_bp.route("/delete_order/<int:order_id>", methods=['DELETE'])
 @jwt_required()
 def delete_order_api(order_id):
-    identity = json.loads(get_jwt_identity())
-    if identity.get("role") != 'employee':
-        return jsonify({"error": "Bạn không có quyền xóa đơn hàng"}), 403
+    try:
+        identity = json.loads(get_jwt_identity())
+        
+        # Kiểm tra quyền
+        if identity.get("role") != 'employee':
+            return jsonify({
+                "success": False,
+                "error": "Bạn không có quyền xóa đơn hàng"
+            }), 403
 
-    success = delete_order(order_id)
-    if not success:
-        return jsonify({"message": "Xóa đơn hàng thành công"}), 200
-    return jsonify({"error": "Không tìm thấy đơn hàng"}), 404
+        # Gọi hàm delete
+        success = delete_order(order_id)
+        
+        # ✅ LOGIC ĐÚNG
+        if success:  # Nếu THÀNH CÔNG
+            return jsonify({
+                "success": True,
+                "message": "Xóa đơn hàng thành công"
+            }), 200
+        else:  # Nếu THẤT BẠI
+            return jsonify({
+                "success": False,
+                "error": "Không tìm thấy đơn hàng"
+            }), 404
+            
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
 
 
 @order_admin_bp.route("/orders", methods=['GET'])
