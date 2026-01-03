@@ -6,22 +6,35 @@ from hus_bakery_app.models.products import Product
 from sqlalchemy import func, extract, desc
 from datetime import datetime, timedelta
 
+def total_order_of_month(month=None, year=None, branch_id=None):
+    """
+    Đếm tổng số đơn hàng theo tháng, năm và chi nhánh (nếu có)
+    """
+    query = Order.query
 
-def total_order_of_month(month, year):
-    orders_count = Order.query.filter(
-        extract('month', Order.created_at) == month,
-        extract('year', Order.created_at) == year,
-    ).count()
-    return orders_count
+    # Filter theo tháng
+    if month:
+        query = query.filter(extract('month', Order.created_at) == month)
+    # Filter theo năm
+    if year:
+        query = query.filter(extract('year', Order.created_at) == year)
+    # Filter theo chi nhánh
+    if branch_id:
+        query = query.filter(Order.branch_id == branch_id)
 
+    return query.count()
 
-def total_amount_of_month(month, year):
-    result = db.session.query(func.sum(Order.total_amount)).filter(
-        extract('month', Order.created_at) == month,
-        extract('year', Order.created_at) == year
-    ).scalar()
+def total_amount_of_month(month=None, year=None, branch_id=None):
+    query = Order.query
 
-    return float(result) if result else 0.0
+    if month:
+        query = query.filter(extract('month', Order.created_at) == month)
+    if year:
+        query = query.filter(extract('year', Order.created_at) == year)
+    if branch_id:
+        query = query.filter(Order.branch_id == branch_id)
+
+    return query.with_entities(func.sum(Order.total_amount)).scalar() or 0
 
 
 def total_customer_of_month(month, year):
@@ -88,14 +101,27 @@ def get_weekly_revenue_overview():
     }
 
 
-def get_order_status_distribution():
-    # 1. Tìm ID mới nhất cho mỗi đơn hàng để lấy trạng thái hiện tại
+
+def get_order_status_distribution(month=None, year=None, branch_id=None):
+    """
+    Thống kê phân phối trạng thái đơn hàng theo tháng, năm và chi nhánh.
+    """
+    # 1. Lấy các ID trạng thái mới nhất cho mỗi đơn hàng
     latest_status_ids = db.session.query(
         func.max(OrderStatus.id)
-    ).group_by(OrderStatus.order_id)
+    )
 
-    # 2. Thống kê số lượng theo từng nhóm trạng thái
-    # Lưu ý: Map các trạng thái từ DB sang các nhóm hiển thị trên biểu đồ
+    if month:
+        latest_status_ids = latest_status_ids.filter(extract('month', OrderStatus.updated_at) == month)
+    if year:
+        latest_status_ids = latest_status_ids.filter(extract('year', OrderStatus.updated_at) == year)
+    if branch_id:
+        latest_status_ids = latest_status_ids.join(Order, Order.order_id == OrderStatus.order_id)\
+                                           .filter(Order.branch_id == branch_id)
+
+    latest_status_ids = latest_status_ids.group_by(OrderStatus.order_id)
+
+    # 2. Thống kê số lượng theo trạng thái hiện tại
     status_counts = db.session.query(
         OrderStatus.status,
         func.count(OrderStatus.id)
@@ -103,13 +129,12 @@ def get_order_status_distribution():
         OrderStatus.id.in_(latest_status_ids)
     ).group_by(OrderStatus.status).all()
 
-    # 3. Chuẩn hóa dữ liệu theo format ảnh thiết kế
-    # Định nghĩa các nhóm hiển thị
+    # 3. Chuẩn hóa dữ liệu theo nhóm hiển thị
     stats = {
-        "Completed": 0,  # Tương ứng "Đã giao"
-        "Pending": 0,  # Tương ứng "Đang xử lý"
-        "Shipping": 0,  # Tương ứng "Đang giao"
-        "Cancelled": 0  # Tương ứng "Đã hủy" (nếu có)
+        "Completed": 0,  # Đã giao
+        "Pending": 0,    # Đang xử lý
+        "Shipping": 0,   # Đang giao
+        "Cancelled": 0   # Không hoàn thành
     }
 
     total = 0
@@ -124,7 +149,7 @@ def get_order_status_distribution():
             stats["Cancelled"] += count
         total += count
 
-    # 4. Tính toán phần trăm cho thanh progress bar (tùy chọn)
+    # 4. Tính % để hiển thị progress bar
     result = []
     for key, value in stats.items():
         percentage = (value / total * 100) if total > 0 else 0
@@ -140,19 +165,32 @@ def get_order_status_distribution():
     }
 
 
-def get_top_selling_products(limit=5):
-    # Truy vấn join OrderItem với Product để lấy thông tin chi tiết
-    results = db.session.query(
+def get_top_selling_products(month=None, year=None, branch_id=None, limit=5):
+    """
+    Lấy top sản phẩm bán chạy theo số lượng, lọc theo tháng, năm và chi nhánh.
+    """
+    query = db.session.query(
         Product.name,
         Product.image_url,
         func.sum(OrderItem.quantity).label('total_quantity'),
         func.sum(OrderItem.quantity * OrderItem.price).label('total_revenue')
-    ).join(Product, OrderItem.product_id == Product.product_id) \
-        .group_by(Product.product_id) \
-        .order_by(desc('total_quantity')) \
-        .limit(limit).all()
+    ).join(Product, OrderItem.product_id == Product.product_id)\
+     .join(Order, Order.order_id == OrderItem.order_id)
 
-    # Tính toán % so với sản phẩm bán chạy nhất để hiển thị thanh progress bar
+    # Lọc theo branch_id
+    if branch_id:
+        query = query.filter(Order.branch_id == branch_id)
+    # Lọc theo tháng/năm
+    if month:
+        query = query.filter(extract('month', Order.created_at) == month)
+    if year:
+        query = query.filter(extract('year', Order.created_at) == year)
+
+    results = query.group_by(Product.product_id)\
+                   .order_by(desc('total_quantity'))\
+                   .limit(limit)\
+                   .all()
+
     max_qty = results[0].total_quantity if results else 1
 
     top_products = []
@@ -164,6 +202,7 @@ def get_top_selling_products(limit=5):
             "revenue": f"{float(row.total_revenue) / 1000000:.1f}Mđ",
             "percentage": round((row.total_quantity / max_qty) * 100)
         })
+
     return top_products
 
 

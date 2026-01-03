@@ -46,19 +46,20 @@ def api_get_total_amount():
 
     month = request.args.get('month', type=int)
     year = request.args.get('year', type=int)
+    branch_id = request.args.get('branch_id', type=int)  # 🔹 thêm branch_id
 
     if not month or not year:
         return jsonify({"error": "Thiếu thông tin tháng hoặc năm"}), 400
 
-        # Gọi hàm service đã tối ưu ở trên
-    total = total_amount_of_month(month, year)
-
+    # Gọi hàm service đã tối ưu, truyền branch_id nếu có
+    total = total_amount_of_month(month, year, branch_id)
+    
     return jsonify({
         "month": month,
         "year": year,
+        "branch_id": branch_id,       # 🔹 trả về branch_id để debug
         "total_amount": total
     }), 200
-
 
 @dashboard_bp.route('/total_customer_of_month', methods=['POST'])
 @jwt_required()
@@ -106,15 +107,25 @@ def api_get_total_product():
     }), 200
 
 
-@dashboard_bp.route('/order-status-distribution', methods=['GET'])
+
+
+# ------------------------------
+# Top Selling Products
+# ------------------------------
+@dashboard_bp.route('/top-products', methods=['GET'])
 @jwt_required()
-def api_order_status_distribution():
+def api_top_products():
     identity = json.loads(get_jwt_identity())
     if identity.get("role") != 'employee':
         return jsonify({"error": "Truy cập bị từ chối"}), 403
 
+    # Lấy params từ query string: ?month=1&year=2026&branch_id=2
+    month = request.args.get('month', type=int)
+    year = request.args.get('year', type=int)
+    branch_id = request.args.get('branch_id', type=int)
+
     try:
-        data = get_order_status_distribution()
+        data = get_top_selling_products(month=month, year=year, branch_id=branch_id)
         return jsonify({
             "success": True,
             "data": data
@@ -126,18 +137,34 @@ def api_order_status_distribution():
         }), 500
 
 
-@dashboard_bp.route('/top-products', methods=['GET'])
+# ------------------------------
+# Order Status Distribution
+# ------------------------------
+@dashboard_bp.route('/order-status-distribution', methods=['GET'])
 @jwt_required()
-def api_top_products():
+def api_order_status_distribution():
     identity = json.loads(get_jwt_identity())
     if identity.get("role") != 'employee':
         return jsonify({"error": "Truy cập bị từ chối"}), 403
 
-    data = get_top_selling_products()
-    return jsonify({
-        "success": True,
-        "data": data
-    }), 200
+    # Lấy params từ query string
+    month = request.args.get('month', type=int)
+    year = request.args.get('year', type=int)
+    branch_id = request.args.get('branch_id', type=int)
+
+    try:
+        data = get_order_status_distribution(month=month, year=year, branch_id=branch_id)
+        return jsonify({
+            "success": True,
+            "data": data
+        }), 200
+    except Exception as e:
+        import traceback
+        print(traceback.format_exc()) 
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500
 
 
 @dashboard_bp.route('/customer-growth', methods=['GET'])

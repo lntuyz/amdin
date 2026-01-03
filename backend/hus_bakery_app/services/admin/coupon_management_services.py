@@ -20,7 +20,6 @@ def add_coupon_service(data):
         begin_date=data.get('begin_date'),
         end_date=data.get('end_date'),
         status=data.get("status"),
-        used_count=data.get("used_count"),
         created_at=datetime.now(),
         updated_at=datetime.now()
     )

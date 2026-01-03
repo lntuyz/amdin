@@ -33,7 +33,7 @@ def edit_shipper_service(shipper_id, data):
     shipper = Shipper.query.get(shipper_id)
     if shipper:
         # Cập nhật các trường dựa trên tên biến trong Model shipper.py
-        shipper.shipper_name = data.get('name', shipper.name)
+        shipper.name = data.get('name', shipper.name)
         shipper.phone = data.get('phone', shipper.phone)
         shipper.email = data.get('email', shipper.email)
         shipper.status = data.get('status', shipper.status)
