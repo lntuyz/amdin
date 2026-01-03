@@ -5,7 +5,9 @@ const DefaultHeader = ({ children }) => {
   const { user, logout } = useAuth();
   return (
     <div className="bg-color">
-      <HeaderComponent user={user} onLogout={logout} />
+      <div className="header-sticky">
+        <HeaderComponent user={user} onLogout={logout} />
+      </div>
 
       {children}
       <Footer />
