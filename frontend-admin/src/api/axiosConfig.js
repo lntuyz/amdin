@@ -1,12 +1,10 @@
 // ===============================================
 // Location: src/api/axiosConfig.js
-// FIXED: Better token handling, cleaner interceptors
 // ===============================================
 import axios from "axios";
 import { tokenStorage } from "../utils/token";
 
 const api = axios.create({
-  // ✅ Không cần baseURL vì Vite proxy đã handle
   // Vite proxy sẽ chuyển:
   // /superadmin/... -> http://localhost:5001/superadmin/...
 
@@ -25,9 +23,9 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    // ✅ Only log in development
+    // Only log in development
     if (process.env.NODE_ENV === "development") {
-      console.log("📤 Request:", {
+      console.log(" Request:", {
         method: config.method?.toUpperCase(),
         url: config.url,
         params: config.params,
@@ -38,7 +36,7 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
-    console.error("❌ Request error:", error);
+    console.error(" Request error:", error);
     return Promise.reject(error);
   }
 );
@@ -46,9 +44,9 @@ api.interceptors.request.use(
 // ============= RESPONSE INTERCEPTOR =============
 api.interceptors.response.use(
   (response) => {
-    // ✅ Only log in development
+    //  Only log in development
     if (process.env.NODE_ENV === "development") {
-      console.log("📥 Response:", {
+      console.log(" Response:", {
         status: response.status,
         url: response.config.url,
         data: response.data,
@@ -59,37 +57,35 @@ api.interceptors.response.use(
   (error) => {
     if (error.response) {
       // Server responded with error
-      console.error("❌ API Error:", {
+      console.error(" API Error:", {
         status: error.response.status,
         url: error.config?.url,
         message: error.response.data?.message || error.message,
       });
 
-      // ✅ Handle specific status codes
+      //  Handle specific status codes
       switch (error.response.status) {
         case 401:
           // Token expired or invalid
-          console.error("🔒 Unauthorized - Token invalid");
-          // ✅ IMPORTANT: Uncomment when you have real login
-          // localStorage.clear();
-          // window.location.href = '/';
+          console.error(" Unauthorized - Token invalid");
+      
           break;
         case 403:
-          console.error("🚫 Forbidden - No permission");
+          console.error(" Forbidden - No permission");
           break;
         case 404:
-          console.error("🔍 Not Found");
+          console.error(" Not Found");
           break;
         case 500:
-          console.error("💥 Server Error");
+          console.error(" Server Error");
           break;
       }
     } else if (error.request) {
       // Request was made but no response
-      console.error("🌐 No response from server");
+      console.error(" No response from server");
     } else {
       // Something else happened
-      console.error("⚠️ Error:", error.message);
+      console.error(" Error:", error.message);
     }
 
     return Promise.reject(error);

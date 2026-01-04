@@ -3,7 +3,7 @@
 // ===============================================
 import React from "react";
 import { FiSearch, FiDownload, FiPlus } from "react-icons/fi";
-import { ROLE_TABS } from "../employeeConstants";
+import { ROLE_TABS } from "../utils/employeeConstants";
 
 const EmployeeActionBar = ({
   activeRole,

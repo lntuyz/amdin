@@ -4,7 +4,7 @@
 import React from "react";
 import { FiUser } from "react-icons/fi";
 import FormModal from "../../../components/FormModal/FormModal";
-import { EMPLOYEE_FIELDS, EMPLOYEE_EDIT_FIELDS } from "../employeeConstants";
+import { EMPLOYEE_FIELDS, EMPLOYEE_EDIT_FIELDS } from "../utils/employeeConstants";
 
 const EmployeeModal = ({
   isOpen,

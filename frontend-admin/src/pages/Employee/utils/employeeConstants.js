@@ -1,5 +1,5 @@
 // ===============================================
-// Location: src/pages/Employee/employeeConstants.js
+// Location: src/pages/Employee/utils/employeeConstants.js
 // ===============================================
 import {
   FiUser,
@@ -13,7 +13,7 @@ import {
   FiUserX,
 } from "react-icons/fi";
 
-// ================= STATS CONFIG =================
+// ==================== STATS CONFIG ====================
 export const STATS_CONFIG = [
   {
     key: "total",
@@ -35,7 +35,7 @@ export const STATS_CONFIG = [
   },
 ];
 
-// ================= ROLE TABS =================
+// ==================== ROLE TABS ====================
 export const ROLE_TABS = [
   { id: "all", label: "Tất cả", role: null },
   { id: "manager", label: "Quản lý", role: "Quản lý" },
@@ -43,13 +43,7 @@ export const ROLE_TABS = [
   { id: "sales", label: "Bán hàng", role: "Bán hàng" },
 ];
 
-// ================= BRANCHES =================
-export const getBranchName = (branchId, branches = []) => {
-  const branch = branches.find((b) => b.value === String(branchId));
-  return branch ? branch.label : `Chi nhánh ${branchId}`;
-};
-
-// ================= EMPLOYEE FIELDS - ADD NEW =================
+// ==================== EMPLOYEE FIELDS - ADD NEW ====================
 export const EMPLOYEE_FIELDS = [
   {
     name: "name",
@@ -123,7 +117,7 @@ export const EMPLOYEE_FIELDS = [
   },
 ];
 
-// ================= EMPLOYEE EDIT FIELDS - REMOVED BRANCH_ID =================
+// ==================== EMPLOYEE EDIT FIELDS - REMOVED BRANCH_ID ====================
 export const EMPLOYEE_EDIT_FIELDS = [
   {
     name: "name",
@@ -178,7 +172,7 @@ export const EMPLOYEE_EDIT_FIELDS = [
   // No branch_id in Edit mode to prevent branch modification
 ];
 
-// ================= HELPER FUNCTIONS =================
+// ==================== HELPER FUNCTIONS ====================
 export const getInitials = (name) => {
   if (!name) return "NA";
   return name
@@ -211,4 +205,9 @@ export const getRoleColor = (role) => {
 
 export const getStatusColor = (status) => {
   return status === "Đang làm việc" ? "success" : "default";
+};
+
+export const getBranchName = (branchId, branches = []) => {
+  const branch = branches.find((b) => b.value === String(branchId));
+  return branch ? branch.label : `Chi nhánh ${branchId}`;
 };

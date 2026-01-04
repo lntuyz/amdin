@@ -1,6 +1,5 @@
 // ===============================================
 // FILE: src/api/dashboardApi.js
-
 // ===============================================
 import api from "./axiosConfig";
 
@@ -8,8 +7,6 @@ export const dashboardApi = {
   // ========================================
   // BRANCH ADMIN APIs
   // ========================================
-
-  //  4 APIs  theo month/year
 
   getTotalOrders: async (month, year) => {
     try {
@@ -49,7 +46,7 @@ export const dashboardApi = {
   },
 
   getTotalCustomers: async (month, year) => {
-    console.log("DEBUG getTotalCustomers:", { month, year }); // Thêm dòng này
+    console.log("DEBUG getTotalCustomers:", { month, year });
     try {
       const response = await api.post(
         "http://localhost:5001/api/admin/dashboard/total_customer_of_month",
@@ -58,7 +55,7 @@ export const dashboardApi = {
           params: { month, year },
         }
       );
-      console.log("Response total:", response.data); // Thêm dòng này
+      console.log("Response total:", response.data);
       return {
         success: true,
         data: response.data?.total_customers || 0,
@@ -88,13 +85,12 @@ export const dashboardApi = {
     }
   },
 
-  // trả tất cả data)
   getOrderStatusDistribution: async (month, year, branch_id) => {
     try {
       const response = await api.get(
         "http://localhost:5001/api/admin/dashboard/order-status-distribution",
         {
-          params: { month, year, branch_id }, // gửi params
+          params: { month, year, branch_id },
         }
       );
 
@@ -108,15 +104,12 @@ export const dashboardApi = {
     }
   },
 
-  // -------------------------------
-  // Top Selling Products
-  // -------------------------------
   getTopProducts: async (month, year, branch_id) => {
     try {
       const response = await api.get(
         "http://localhost:5001/api/admin/dashboard/top-products",
         {
-          params: { month, year, branch_id }, // gửi params
+          params: { month, year, branch_id },
         }
       );
 
@@ -146,14 +139,17 @@ export const dashboardApi = {
   },
 
   // ========================================
-  // SUPER ADMIN APIs (KHÔNG FILTER)
+  // SUPER ADMIN APIs (CÓ FILTER MONTH/YEAR)
   // ========================================
 
-  //  Doanh thu theo chi nhánh
-  getRevenuePerBranch: async () => {
+  //  Doanh thu theo chi nhánh - THÊM month, year
+  getRevenuePerBranch: async (month, year) => {
     try {
       const response = await api.get(
-        "http://localhost:5001/api/superadmin/dashboard/revenue_per_branch"
+        "http://localhost:5001/api/superadmin/dashboard/revenue_per_branch",
+        {
+          params: { month, year },
+        }
       );
       console.log(
         "[dashboardApi] getRevenuePerBranch response:",
@@ -169,11 +165,14 @@ export const dashboardApi = {
     }
   },
 
-  //  Thống kê đơn hàng theo status
-  getOrderStats: async () => {
+  // Thống kê đơn hàng theo status
+  getOrderStats: async (month, year) => {
     try {
       const response = await api.get(
-        "http://localhost:5001/api/superadmin/dashboard/order_stats"
+        "http://localhost:5001/api/superadmin/dashboard/order_stats",
+        {
+          params: { month, year },
+        }
       );
       console.log("[dashboardApi] getOrderStats response:", response.data);
       return {
@@ -187,12 +186,12 @@ export const dashboardApi = {
   },
 
   //  Biểu đồ doanh thu theo thời gian
-  getRevenueChart: async (period = "month") => {
+  getRevenueChart: async (period = "month", month, year) => {
     try {
       const response = await api.get(
         "http://localhost:5001/api/superadmin/dashboard/revenue_chart",
         {
-          params: { period },
+          params: { period, month, year },
         }
       );
       console.log("[dashboardApi] getRevenueChart response:", response.data);

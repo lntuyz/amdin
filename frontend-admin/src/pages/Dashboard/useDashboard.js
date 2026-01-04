@@ -69,7 +69,6 @@ export const useDashboard = () => {
     console.log("[useDashboard] Loading Branch Admin data...");
 
     try {
-      // ✅ CHỈ GỌI 4 APIs: 1 filtered (doanh thu) + 3 unfiltered (biểu đồ)
       const [amountRes, orderStatusRes, topProductsRes, customerGrowthRes] =
         await Promise.all([
           dashboardApi.getTotalAmount(
@@ -97,7 +96,6 @@ export const useDashboard = () => {
         customerGrowth: customerGrowthRes.data,
       });
 
-      // ✅ Set state - CHỈ DOANH THU
       setBranchStats({
         amount: amountRes.data || 0,
       });
@@ -117,10 +115,11 @@ export const useDashboard = () => {
     console.log("[useDashboard] Loading Super Admin data...");
 
     try {
+      
       const [revenueRes, orderStatsRes, revenueChartRes] = await Promise.all([
-        dashboardApi.getRevenuePerBranch(),
-        dashboardApi.getOrderStats(),
-        dashboardApi.getRevenueChart("month"),
+        dashboardApi.getRevenuePerBranch(selectedMonth, selectedYear),
+        dashboardApi.getOrderStats(selectedMonth, selectedYear),
+        dashboardApi.getRevenueChart("month", selectedMonth, selectedYear),
       ]);
 
       console.log("[useDashboard] Super Admin data:", {

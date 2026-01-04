@@ -9,13 +9,9 @@ const voucherApi = {
    */
   getAllVouchers: async () => {
     try {
-      console.log(" [voucherApi] Fetching all vouchers...");
-
       const response = await api.get(
         "http://localhost:5001/api/admin/coupon_management/coupon"
       );
-
-      console.log(" [voucherApi] Raw response:", response.data);
 
       const vouchers = Array.isArray(response.data) ? response.data : [];
 
@@ -24,7 +20,7 @@ const voucherApi = {
         data: vouchers,
       };
     } catch (error) {
-      console.error(" [voucherApi] GET error:", error);
+      console.error("[voucherApi] GET error:", error);
       return {
         success: false,
         data: [],
@@ -39,9 +35,6 @@ const voucherApi = {
    */
   addVoucher: async (voucherData) => {
     try {
-      console.log("➕ [voucherApi] Adding voucher:", voucherData);
-
-      // ✅ Map đúng với backend
       const payload = {
         description: voucherData.description || `VOUCHER${Date.now()}`,
         discount_value: parseFloat(voucherData.discount_value) || 0,
@@ -53,14 +46,10 @@ const voucherApi = {
         status: voucherData.status || "active",
       };
 
-      console.log("📦 [voucherApi] Payload:", payload);
-
       const response = await api.post(
         "http://localhost:5001/api/admin/coupon_management/add_coupon",
         payload
       );
-
-      console.log("✅ [voucherApi] Add response:", response.data);
 
       return {
         success: true,
@@ -68,7 +57,7 @@ const voucherApi = {
         data: response.data,
       };
     } catch (error) {
-      console.error("❌ [voucherApi] POST error:", error);
+      console.error("[voucherApi] POST error:", error);
       return {
         success: false,
         message: error.response?.data?.error || "Không thể thêm voucher",
@@ -81,10 +70,6 @@ const voucherApi = {
    */
   updateVoucher: async (couponId, voucherData) => {
     try {
-      console.log("✏️ [voucherApi] Updating voucher ID:", couponId);
-      console.log("✏️ [voucherApi] Voucher data:", voucherData);
-
-      // ✅ Map đúng với backend
       const payload = {
         description: voucherData.description,
         discount_value: parseFloat(voucherData.discount_value) || 0,
@@ -96,23 +81,17 @@ const voucherApi = {
         status: voucherData.status,
       };
 
-      console.log("📦 [voucherApi] Final payload:", payload);
-
       const response = await api.put(
         `http://localhost:5001/api/admin/coupon_management/update_coupon/${couponId}`,
         payload
       );
-
-      console.log("✅ [voucherApi] Update response:", response.data);
 
       return {
         success: true,
         message: response.data.message || "Cập nhật voucher thành công",
       };
     } catch (error) {
-      console.error("❌ [voucherApi] PUT error:", error);
-      console.error("❌ Error response:", error.response?.data);
-      console.error("❌ Error status:", error.response?.status);
+      console.error("[voucherApi] PUT error:", error);
       return {
         success: false,
         message:
@@ -128,20 +107,16 @@ const voucherApi = {
    */
   deleteVoucher: async (couponId) => {
     try {
-      console.log("🗑️ [voucherApi] Deleting voucher ID:", couponId);
-
       const response = await api.delete(
         `http://localhost:5001/api/admin/coupon_management/delete_coupon/${couponId}`
       );
-
-      console.log("✅ [voucherApi] Delete response:", response.data);
 
       return {
         success: true,
         message: response.data.message || "Xóa voucher thành công",
       };
     } catch (error) {
-      console.error("❌ [voucherApi] DELETE error:", error);
+      console.error("[voucherApi] DELETE error:", error);
       return {
         success: false,
         message: error.response?.data?.error || "Không thể xóa voucher",

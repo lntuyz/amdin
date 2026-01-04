@@ -3,7 +3,7 @@
 // ===============================================
 import React from "react";
 import StatsCard from "../../../components/StatsCard/StatsCard";
-import { STATS_CONFIG } from "../employeeConstants";
+import { STATS_CONFIG } from "../utils/employeeConstants";
 
 const EmployeeStats = ({ stats }) => {
   return (

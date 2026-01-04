@@ -1,14 +1,14 @@
 // ===============================================
-// Location: src/pages/Employees/useEmployee.js
+// Location: src/pages/Employee/hooks/useEmployee.js
 // ===============================================
 
 import { useState, useEffect, useMemo } from "react";
 import { message } from "antd";
-import { employeeApi } from "../../api/employeeApi";
-import { useAuth } from "../../context/AuthContext";
+import { employeeApi } from "../../../api/employeeApi";
+import { useAuth } from "../../../context/AuthContext";
 
 export const useEmployee = () => {
-  // AUTH CONTEXT
+  // ==================== AUTH CONTEXT ====================
   const {
     user,
     isSuperAdmin,
@@ -17,7 +17,7 @@ export const useEmployee = () => {
     getCurrentBranch,
   } = useAuth();
 
-  // STATE
+  // ==================== STATE ====================
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeRole, setActiveRole] = useState("all");
@@ -25,7 +25,7 @@ export const useEmployee = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  // GET CURRENT BRANCH ID
+  // ==================== GET CURRENT BRANCH ID ====================
   const currentBranchId = useMemo(() => {
     const branch = getCurrentBranch();
     const branchId = branch?.id ? parseInt(branch.id, 10) : null;
@@ -42,7 +42,7 @@ export const useEmployee = () => {
     return branchId;
   }, [user, getCurrentBranch, isSuperAdmin, isBranchAdmin, isViewingBranch]);
 
-  // FETCH DATA
+  // ==================== FETCH DATA ====================
   useEffect(() => {
     console.log("Fetching employees for branch_id:", currentBranchId);
     fetchEmployees();
@@ -88,7 +88,7 @@ export const useEmployee = () => {
     }
   };
 
-  // FILTERED DATA
+  // ==================== FILTERED DATA ====================
   const filteredEmployees = useMemo(() => {
     let filtered = [...employees];
 
@@ -116,7 +116,7 @@ export const useEmployee = () => {
     return filtered;
   }, [employees, activeRole, searchQuery]);
 
-  // STATS
+  // ==================== STATS ====================
   const stats = useMemo(() => {
     return {
       total: employees.length,
@@ -125,7 +125,7 @@ export const useEmployee = () => {
     };
   }, [employees]);
 
-  // ROLE COUNT
+  // ==================== ROLE COUNT ====================
   const roleCount = (roleId) => {
     if (roleId === "all") return employees.length;
 
@@ -138,7 +138,7 @@ export const useEmployee = () => {
     return employees.filter((e) => e.role === roleMap[roleId]).length;
   };
 
-  // CRUD
+  // ==================== CRUD OPERATIONS ====================
   const addEmployee = async (employeeData) => {
     try {
       console.log("Adding employee process:", employeeData);
@@ -222,7 +222,7 @@ export const useEmployee = () => {
     }
   };
 
-  // HEADER TEXT
+  // ==================== HEADER TEXT ====================
   const getHeaderTitle = () => {
     const branch = getCurrentBranch();
     if (branch) {
@@ -239,7 +239,7 @@ export const useEmployee = () => {
     return `Quản lý ${stats.total} nhân viên trên toàn hệ thống`;
   };
 
-  // HANDLERS
+  // ==================== HANDLERS ====================
   const handleRoleChange = (roleId) => {
     setActiveRole(roleId);
     setCurrentPage(1);
@@ -255,31 +255,37 @@ export const useEmployee = () => {
     setCurrentPage(1);
   };
 
-  // RETURN
+  // ==================== RETURN ====================
   return {
+    // Data
     employees,
     filteredEmployees,
     stats,
 
+    // State
     loading,
     activeRole,
     statusFilter,
     searchQuery,
     currentPage,
 
+    // CRUD
     addEmployee,
     updateEmployee,
     deleteEmployee,
 
+    // Helpers
     roleCount,
     getHeaderTitle,
     getHeaderSubtitle,
 
+    // Setters & Handlers
     setCurrentPage,
     handleRoleChange,
     handleStatusChange,
     handleSearchChange,
 
+    // Auth info
     isSuperAdmin,
     isBranchAdmin,
     currentBranchId,

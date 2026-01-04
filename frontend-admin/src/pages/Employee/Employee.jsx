@@ -2,22 +2,30 @@
 // Location: src/pages/Employee/Employee.jsx
 // ===============================================
 import React, { useState } from "react";
-import { Modal, Alert, Button } from "antd";
+import { Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { useEmployee } from "./useEmployee";
+
+// Hooks
+import { useEmployee } from "./hooks/useEmployee";
 import { useBranches } from "./hooks/useBranches";
+
+// Components
 import EmployeeHeader from "./components/EmployeeHeader";
 import EmployeeStats from "./components/EmployeeStats";
 import EmployeeActionBar from "./components/EmployeeActionBar";
 import EmployeeTable from "./components/EmployeeTable";
 import EmployeeModal from "./components/EmployeeModal";
+
+// Utils
 import { exportEmployeesToCSV } from "./utils/employeeHelpers";
-import "./Employee.css";
+
+// Styles
+import "./styles/Employee.css";
 
 const { confirm } = Modal;
 
 const Employee = () => {
-  // HOOKS
+  // ==================== HOOKS ====================
   const {
     filteredEmployees,
     stats,
@@ -44,12 +52,12 @@ const Employee = () => {
     refetch,
   } = useBranches();
 
-  // LOCAL STATE
+  // ==================== LOCAL STATE ====================
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState("add");
   const [selectedEmployee, setSelectedEmployee] = useState(null);
 
-  // HANDLERS - ADD
+  // ==================== HANDLERS ====================
   const handleAddClick = () => {
     if (branchError || branches.length === 0) {
       Modal.warning({
@@ -66,7 +74,6 @@ const Employee = () => {
     setIsModalOpen(true);
   };
 
-  // HANDLERS - EDIT
   const handleEditClick = (employee) => {
     console.log("EDIT employee:", employee);
     setModalMode("edit");
@@ -74,13 +81,11 @@ const Employee = () => {
     setIsModalOpen(true);
   };
 
-  // HANDLERS - CLOSE MODAL
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedEmployee(null);
   };
 
-  // HANDLERS - SAVE
   const handleSaveEmployee = async (employeeData) => {
     let result;
 
@@ -117,7 +122,6 @@ const Employee = () => {
     }
   };
 
-  // HANDLERS - DELETE
   const handleDelete = (employee) => {
     confirm({
       title: "Xác nhận xóa nhân viên",
@@ -133,12 +137,15 @@ const Employee = () => {
     });
   };
 
-  // HANDLERS - EXPORT
   const handleExport = () => {
     exportEmployeesToCSV(filteredEmployees, branches);
   };
 
-  // PAGINATION CONFIG
+  const handleTableChange = (pagination) => {
+    setCurrentPage(pagination.current);
+  };
+
+  // ==================== PAGINATION CONFIG ====================
   const paginationConfig = {
     current: currentPage,
     pageSize: 10,
@@ -146,32 +153,14 @@ const Employee = () => {
     showSizeChanger: false,
   };
 
-  const handleTableChange = (pagination) => {
-    setCurrentPage(pagination.current);
-  };
-
-  // RENDER
+  // ==================== RENDER ====================
   return (
     <div className="employee-container">
       {/* Header */}
-      <EmployeeHeader title={getHeaderTitle()} subtitle={getHeaderSubtitle()} />
-
-      {/* Error Alert */}
-      {branchError && (
-        <Alert
-          message="Lỗi tải dữ liệu"
-          description={branchError}
-          type="error"
-          showIcon
-          closable
-          style={{ marginBottom: "16px" }}
-          action={
-            <Button size="small" onClick={refetch}>
-              Thử lại
-            </Button>
-          }
-        />
-      )}
+      <EmployeeHeader 
+        title={getHeaderTitle()} 
+        subtitle={getHeaderSubtitle()} 
+      />
 
       {/* Stats */}
       <EmployeeStats stats={stats} />

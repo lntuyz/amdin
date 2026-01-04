@@ -59,11 +59,23 @@ const DashboardView = () => {
 
   // ===== BRANCH ADMIN =====
   if (isAdmin) {
+    // ✅ CHỈ LẤY 3 TRẠNG THÁI và MAP SANG TIẾNG VIỆT
+    const statusMapping = {
+      'Pending': 'Chưa xử lý',
+      'Delivered': 'Đã giao',
+      'Processing': 'Đang giao'
+    };
+    
+    const allowedStatuses = ['Pending', 'Delivered', 'Processing'];
+    const filteredDistribution = orderStatus?.distribution?.filter(d => 
+      allowedStatuses.includes(d.name)
+    ) || [];
+
     const pieData = {
-      labels: orderStatus?.distribution?.map(d => d.name) || [],
+      labels: filteredDistribution.map(d => statusMapping[d.name] || d.name),
       datasets: [{
-        data: orderStatus?.distribution?.map(d => d.value) || [],
-        backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444'],
+        data: filteredDistribution.map(d => d.value),
+        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b'],
         borderWidth: 0
       }]
     };
@@ -246,11 +258,23 @@ const DashboardView = () => {
       }]
     };
 
+    // ✅ CHỈ LẤY 3 TRẠNG THÁI và MAP SANG TIẾNG VIỆT
+    const statusMapping = {
+      'Pending': 'Chưa xử lý',
+      'Delivered': 'Đã giao',
+      'Processing': 'Đang giao'
+    };
+    
+    const allowedStatuses = ['Pending', 'Delivered', 'Processing'];
+    const filteredOrderStats = orderStats?.filter(o => 
+      allowedStatuses.includes(o.status)
+    ) || [];
+
     const orderPieData = {
-      labels: orderStats?.map(o => o.status) || [],
+      labels: filteredOrderStats.map(o => statusMapping[o.status] || o.status),
       datasets: [{
-        data: orderStats?.map(o => o.count) || [],
-        backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444'],
+        data: filteredOrderStats.map(o => o.count),
+        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b'],
         borderWidth: 0
       }]
     };
@@ -305,9 +329,23 @@ const DashboardView = () => {
         <div className="dashboard-header">
           <div>
             <h1 className="dashboard-title">Dashboard Tổng Quan</h1>
-            <p className="dashboard-subtitle">Thống kê toàn hệ thống</p>
+            <Space style={{ marginTop: 8 }}>
+              <Tag color="blue">Tháng {selectedMonth}/{selectedYear}</Tag>
+            </Space>
           </div>
           <div className="dashboard-controls">
+            <Select 
+              value={selectedMonth} 
+              onChange={handleMonthChange} 
+              options={monthOptions} 
+              style={{ width: 120 }}
+            />
+            <Select 
+              value={selectedYear} 
+              onChange={handleYearChange} 
+              options={yearOptions} 
+              style={{ width: 100 }}
+            />
             <Button icon={<ReloadOutlined />} onClick={refreshData}>
               Làm mới
             </Button>
@@ -325,7 +363,11 @@ const DashboardView = () => {
               }}
             >
               <Statistic
-                title={<span style={{ color: 'rgba(255,255,255,0.9)', fontSize: 16 }}>Tổng doanh thu toàn hệ thống</span>}
+                title={
+                  <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: 16 }}>
+                    💰 Tổng doanh thu tháng {selectedMonth}/{selectedYear}
+                  </span>
+                }
                 value={totalRevenue}
                 precision={0}
                 valueStyle={{ color: '#fff', fontSize: 36, fontWeight: 700 }}
@@ -345,7 +387,11 @@ const DashboardView = () => {
               }}
             >
               <Statistic
-                title={<span style={{ color: 'rgba(255,255,255,0.9)', fontSize: 14 }}>Tổng đơn hàng</span>}
+                title={
+                  <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: 14 }}>
+                    📦 Tổng đơn hàng
+                  </span>
+                }
                 value={totalOrders}
                 precision={0}
                 valueStyle={{ color: '#fff', fontSize: 32, fontWeight: 700 }}
@@ -383,7 +429,7 @@ const DashboardView = () => {
 
         <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
           <Col xs={24}>
-            <Card title="Xu hướng doanh thu theo tháng">
+            <Card title={`Xu hướng doanh thu - Tháng ${selectedMonth}/${selectedYear}`}>
               <div style={{ height: 400 }}>
                 {revenueLineData.labels.length > 0 ? (
                   <Line data={revenueLineData} options={chartOptions} />

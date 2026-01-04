@@ -9,8 +9,7 @@ import {
   formatCurrency,
   getRoleColor,
   getBranchName,
-  getInitials,
-} from "../employeeConstants";
+} from "../utils/employeeConstants";
 
 const EmployeeTable = ({
   employees,

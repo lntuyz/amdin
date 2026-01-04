@@ -1,8 +1,8 @@
 /* =============================================== */
-/* Location: src/pages/Employee/Employee.css       */
+/* Location: src/pages/Employee/styles/Employee.css */
 /* =============================================== */
 
-/* ================= CONTAINER ================= */
+/* ==================== CONTAINER ==================== */
 .employee-container {
   padding: 24px;
   background: #f8f9fa;
@@ -12,7 +12,7 @@
   color: #1e293b;
 }
 
-/* ================= HEADER ================= */
+/* ==================== HEADER ==================== */
 .employee-header {
   margin-bottom: 24px;
 }
@@ -31,7 +31,7 @@
   color: #64748b;
 }
 
-/* ================= STATS GRID ================= */
+/* ==================== STATS GRID ==================== */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -39,7 +39,7 @@
   margin-bottom: 24px;
 }
 
-/* ================= TABS + ACTION BAR ================= */
+/* ==================== TABS + ACTION BAR ==================== */
 .tabs-action-bar {
   display: flex;
   justify-content: space-between;
@@ -109,7 +109,7 @@
   flex-wrap: wrap;
 }
 
-/* ================= SEARCH BOX ================= */
+/* ==================== SEARCH BOX ==================== */
 .search-box {
   position: relative;
   display: flex;
@@ -141,10 +141,10 @@
 .search-input:focus {
   border-color: #667eea;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-  width: 280px; /* Mo rong nhẹ khi focus de trai nghiem tot hon */
+  width: 280px;
 }
 
-/* ================= BUTTONS ================= */
+/* ==================== BUTTONS ==================== */
 .export-btn,
 .add-btn {
   height: 40px;
@@ -194,7 +194,7 @@
   transform: translateY(0);
 }
 
-/* ================= RESPONSIVE ================= */
+/* ==================== RESPONSIVE ==================== */
 @media (max-width: 1024px) {
   .search-input,
   .search-input:focus {
