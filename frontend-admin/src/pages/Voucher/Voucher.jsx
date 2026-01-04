@@ -1,6 +1,6 @@
 // ===============================================
 // FILE: src/pages/Voucher/Voucher.jsx
-// ✅ UPDATED: Bỏ cột "Đã dùng", chỉ table view
+// ✅ UPDATED: Bỏ Stats Cards, giữ nguyên form fields
 // ===============================================
 import React, { useState } from "react";
 import { Tag, Space, Button, Tooltip, Modal } from "antd";
@@ -16,7 +16,6 @@ import {
   FiTag,
 } from "react-icons/fi";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import StatsCard from "../../components/StatsCard/StatsCard";
 import DataTable from "../../components/Table/Table";
 import FormModal from "../../components/FormModal/FormModal";
 import { useVoucher } from "./useVoucher";
@@ -302,31 +301,6 @@ const Voucher = () => {
       <div className="voucher-header">
         <h1 className="voucher-title">{getHeaderTitle()}</h1>
         <p className="voucher-subtitle">{getHeaderSubtitle()}</p>
-      </div>
-
-      {/* STATS */}
-      <div className="stats-grid">
-        <StatsCard
-          title="Tổng voucher"
-          value={stats.total}
-          icon={FiTag}
-          color="blue"
-          trend={null}
-        />
-        <StatsCard
-          title="Đang hoạt động"
-          value={stats.active}
-          icon={FiCheckCircle}
-          color="green"
-          trend={null}
-        />
-        <StatsCard
-          title="Hết hạn"
-          value={stats.expired}
-          icon={FiXCircle}
-          color="orange"
-          trend={null}
-        />
       </div>
 
       {/* TOOLBAR */}

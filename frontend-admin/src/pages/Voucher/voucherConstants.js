@@ -198,7 +198,6 @@ export const formatDateForInput = (dateString) => {
   }
 };
 
-// Helper: Convert input date sang ISO string cho backend
 export const formatDateForBackend = (dateString) => {
   if (!dateString) return "";
   try {
